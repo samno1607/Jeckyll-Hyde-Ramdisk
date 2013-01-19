@@ -1,0 +1,65 @@
+# PRODUCT_COPY_FILES in device.mk 'll rename this file to init.lgesu760board.rc on system.img
+
+# This is COSMO common init.rc
+import init.cosmo.rc
+
+
+# This is Open specific init.rc
+# LGE_ADD_START, woojoon.yi@lge.com, adding busybox binary
+    chmod 0777 /system/xbin/busybox
+# LGE_ADD_END
+
+# IWLAN Start, eyes0814@lge.com 2012-7-19, IWLAN
+    chmod 0755 /system/bin/iwland
+# IWLAN End, eyes0814@lge.com 2012-7-19, IWLAN
+
+# LGE_BROADCAST_TDMB {
+on boot
+chown media media /sys/devices/platform/omapdss/manager2/dmb_coefs
+
+service broadcast /system/bin/libbroadcast_server
+    class main
+    user media
+    #group system audio media graphics sdcard_rw
+    group system audio media sdcard_rw
+# LGE_BROADCAST_TDMB }
+
+# [LGE_S][IPSecVPN] 20120201, iamjm.oh@lge.com : Authentec IPSecVPN Kernel Module install
+on boot
+	insmod /system/lib/modules/vpnclient.ko
+# [LGE_E][IPSecVPN] 20120201, iamjm.oh@lge.com : Authentec IPSecVPN Kernel Module install
+       
+# [LGE_S][IPSecVPN] 20120201, iamjm.oh@lge.com : Authentec IPSecVPN Service & IPSecVpn modules permission change
+service vpnclientpm /system/bin/vpnclientpm -O /data/data/com.ipsec.vpnclient/vpnclientpm.txt
+  class main
+# uid dropped to system when capabilities are set
+  group system net_admin net_raw
+  disabled
+
+service vpncstarter /system/bin/vpncstarter
+  class main
+  user system
+  group system net_admin net_raw
+# [LGE_E][IPSecVPN] 20120201, iamjm.oh@lge.com : Authentec IPSecVPN Service & IPSecVpn modules permission change
+
+# Directory for AAT Test
+#  mkdir /system/sounds 0775 root system
+#  mkdir /system/sounds/lgeSounds 0775 root system
+
+# IWLAN Start, eyes0814@lge.com 2012-7-19, IWLAN
+service iwland /system/bin/iwland
+    class main
+    user root
+    oneshot
+# IWLAN End, eyes0814@lge.com 2012-7-19, IWLAN
+
+service lge-tweak-setup	/system/bin/sh	/system/bin/init-tweak.sh
+	class main
+    user root
+    oneshot
+
+service formatfat /system/bin/sh /system/bin/format_fat32.sh
+    class main
+    user root
+    oneshot
+
