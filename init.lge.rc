@@ -4,12 +4,12 @@ import init.ckerror.rc
 ########################################
 # CAPP_UNINSTALL_PRELOADED
 ########################################
-service post_install /system/vendor/bin/post_install.sh
-    disabled
-    oneshot
-
-on property:sys.boot_completed=1
-    start post_install
+#service post_install /system/vendor/bin/post_install.sh
+#    disabled
+#    oneshot
+#
+#on property:sys.boot_completed=1
+#    start post_install
 
 ########################################
 # CAPP_POWEROFF_ANI

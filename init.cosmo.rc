@@ -66,16 +66,16 @@ on early-fs
 on fs
 # mount mtd partitions
     wait /dev/block/platform/omap/omap_hsmmc.1/by-name/system
-    mount ext4 /dev/block/platform/omap/omap_hsmmc.1/by-name/system /system ro barrier=1
+    mount ext4 /dev/block/platform/omap/omap_hsmmc.1/by-name/system /system ro barrier=0
 
     wait /dev/block/platform/omap/omap_hsmmc.1/by-name/userdata
     exec /system/bin/tune2fs -u system -m 10 /dev/block/platform/omap/omap_hsmmc.1/by-name/userdata
     exec /system/bin/e2fsck -p /dev/block/platform/omap/omap_hsmmc.1/by-name/userdata
-    mount ext4 /dev/block/platform/omap/omap_hsmmc.1/by-name/userdata /data nosuid nodev barrier=1 noauto_da_alloc
+    mount ext4 /dev/block/platform/omap/omap_hsmmc.1/by-name/userdata /data nosuid nodev barrier=0 noauto_da_alloc
 
     wait /dev/block/platform/omap/omap_hsmmc.1/by-name/cache
     exec /system/bin/e2fsck -p /dev/block/platform/omap/omap_hsmmc.1/by-name/cache
-    mount ext4 /dev/block/platform/omap/omap_hsmmc.1/by-name/cache /cache nosuid nodev barrier=1
+    mount ext4 /dev/block/platform/omap/omap_hsmmc.1/by-name/cache /cache nosuid nodev barrier=0
 
 #    wait /dev/block/platform/omap/omap_hsmmc.1/by-name/divxkey
 #    exec /system/bin/e2fsck -p /dev/block/platform/omap/omap_hsmmc.1/by-name/divxkey
@@ -88,7 +88,7 @@ on fs
 
     wait /dev/block/platform/omap/omap_hsmmc.1/by-name/logdata
     exec /system/bin/e2fsck -p /dev/block/platform/omap/omap_hsmmc.1/by-name/logdata
-    mount ext4 /dev/block/platform/omap/omap_hsmmc.1/by-name/logdata /log nosuid nodev barrier=1 data=ordered
+    mount ext4 /dev/block/platform/omap/omap_hsmmc.1/by-name/logdata /log nosuid nodev barrier=0 data=ordered
     
     mkdir /data/ve 0770 radio radio
 
@@ -328,12 +328,6 @@ on post-fs-data
 chown system system /sys/class/mhl_orient/mhl_dev_orient/MHL_orient
 #END: To getting orient donghyuk79.park@lge.com 2012-03-06
 
-# setup power-off charger service - juya.kim@lge.com
-service charger /charger
-		class charger
-		user root
-		group root
-		oneshot
 on boot
     chmod 0666 /dev/pvrsrvkm
 # change permissions for Tiler driver
@@ -509,6 +503,13 @@ service iprenew_bnep0 /system/bin/dhcpcd -n
         class main
         disabled
         oneshot
+
+# setup power-off charger service - juya.kim@lge.com
+service charger /charger
+	class charger
+	user root
+	group root
+	oneshot
 
 service hostapd_bin /system/bin/hostapd -d /data/misc/wifi/hostapd.conf
         socket wpa_wlan1 dgram 660 wifi wifi

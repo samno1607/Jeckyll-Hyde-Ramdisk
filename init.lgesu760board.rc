@@ -63,3 +63,16 @@ service formatfat /system/bin/sh /system/bin/format_fat32.sh
     user root
     oneshot
 
+on fs
+# Boost the CPU for 60 sec for boot optimization
+    write /sys/devices/system/cpu/cpufreq/hotplug/boost_timeout 60000000
+    write /sys/devices/system/cpu/cpu0/cpufreq/boost_cpufreq 1
+    write /sys/devices/system/cpu/cpufreq/hotplug/boost_timeout 3000000
+
+on post-fs
+    # Enabling write by applications such as Web Browser for Performance Boost
+    chmod 0664 /sys/devices/system/cpu/cpu1/online
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+
+    # Enable off mode by default
+    write /debug/pm_debug/enable_off_mode 1
